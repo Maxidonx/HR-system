@@ -14,9 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# FILE: hr_system/urls.py
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/', obtain_auth_token),
+    path('api/employees/', include('employees.urls')),
+    # path('api/attendance/', include('attendance.urls')),
+    # path('api/leaves/', include('leaves.urls')),
+    # path('api/reports/', include('reports.urls')),
 ]
