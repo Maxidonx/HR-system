@@ -1,0 +1,24 @@
+1. Initialize Django project and configure database
+2. Create apps: users, employees, attendance, leaves, reports
+
+3. EMPLOYEE MODULE:
+   - Model: EmployeeProfile (ForeignKey to User)
+   - API: Create/Edit/View profiles
+
+4. ATTENDANCE MODULE:
+   - Model: Attendance (user, clock_in, clock_out)
+   - API: Clock in/out, View attendance, Export CSV
+
+5. LEAVE MODULE:
+   - Model: LeaveRequest (user, start_date, end_date, status)
+   - API: Request leave, Approve/Reject (manager), View history
+
+6. REPORTS MODULE:
+   - API: Headcount per dept, CSV Export for data
+   - Charts API for frontend dashboards
+
+7. AUTH:
+   - Login/Logout using DRF Token or JWT
+   - Protect APIs with role-based permissions
+
+8. Deploy: Use Railway for backend; Vercel for frontend

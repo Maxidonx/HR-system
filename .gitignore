@@ -1,0 +1,18 @@
+/venv 
+migrations/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.env
+*.DS_Store
+# Ignore Python bytecode files
+# Ignore virtual environment directory
+# Ignore migration files
+# Ignore cache directories
+# Ignore database files
+# Ignore log files
+# Ignore environment variable files
