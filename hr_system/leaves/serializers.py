@@ -9,7 +9,8 @@ class LeaveRequestSerializer(serializers.ModelSerializer):
     employee_name = serializers.CharField(source='employee.full_name', read_only=True)
     employee_id = serializers.CharField(source='employee.employee_id', read_only=True)
     reviewed_by_name = serializers.CharField(source='reviewed_by.get_full_name', read_only=True, default=None)
-    duration_days = serializers.IntegerField(source='duration_days', read_only=True)
+    # FIX: Removed redundant source='duration_days' argument.
+    duration_days = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = LeaveRequest
