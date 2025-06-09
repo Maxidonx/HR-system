@@ -46,7 +46,7 @@ urlpatterns = [
         path('', include('users.urls')),
         path('attendance/', include('attendance.urls')),
         path('leaves/', include('leaves.urls')),
-        # path('reports/', include('reports.urls')),
+        path('reports/', include('reports.urls')),
         
         # Auth endpoints (if using djoser or similar, or custom ones)
         # For basic token auth provided by DRF:
