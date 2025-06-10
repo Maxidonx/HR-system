@@ -1,20 +1,19 @@
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
-from .models import User # Imported above
-from employees.models import Employee # We'll need this to create an Employee profile on registration
-import datetime
+from .models import User
+from employees.models import Employee
+from django.utils.timezone import now
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for displaying user details."""
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'is_manager')
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
-    Serializer for user registration. Handles creation of User and Token.
+    Serializer for user registration. Handles creation of User.
+    The JWTs will be created by a different endpoint, not during registration.
     """
-    # Make password write-only for security
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True, label="Confirm password")
 
@@ -35,7 +34,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         """
         Create a new user and a corresponding, empty employee profile.
         """
-        # Remove password2 from the data to be passed to User.objects.create_user
         validated_data.pop('password2')
         user = User.objects.create_user(
             username=validated_data['username'],
@@ -45,15 +43,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         
-        # We can also create a basic employee profile at the same time.
-        # This is a good place to link the two models together from the start.
-        # The HR admin would then fill in the rest of the details (job_title, joining_date etc.)
+        # Create a basic employee profile at the same time.
         Employee.objects.create(
             user=user,
             first_name=user.first_name,
             last_name=user.last_name,
-            joining_date=datetime.date.today() # Placeholder joining date
+            email=user.email,
+            joining_date=now().date() # Use a date object
         )
         
-        Token.objects.create(user=user)
+        # We NO LONGER create a Token here.
+        # Token.objects.create(user=user) # <-- REMOVE this line
+        
         return user
