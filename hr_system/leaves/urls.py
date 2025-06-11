@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import LeaveRequestViewSet
 
 router = DefaultRouter()
-router.register(r'', LeaveRequestViewSet, basename='leaves')
+router.register(r'leaves', LeaveRequestViewSet, basename='leaves')
 
 urlpatterns = [
     path('', include(router.urls)),

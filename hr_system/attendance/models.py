@@ -13,7 +13,7 @@ class Attendance(models.Model):
         on_delete=models.CASCADE, 
         related_name='attendance_records'
     )
-    date = models.DateField(default=date.today) # <-- FIX: Changed default from timezone.now to date.today
+    date = models.DateField(default=date.today)
     clock_in = models.DateTimeField()
     clock_out = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True, null=True, help_text="Optional notes, e.g., 'Forgot to clock out'.")

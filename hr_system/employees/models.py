@@ -7,8 +7,7 @@ class Employee(models.Model):
     Model to store employee information.
     Now linked to a User account.
     """
-    # This is the key change: linking Employee to a User account.
-    # This establishes a one-to-one relationship. Each employee has one user account.
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, # If the user is deleted, the employee profile is also deleted.
@@ -19,9 +18,6 @@ class Employee(models.Model):
 
     # The rest of the model remains the same...
     employee_id = models.CharField(max_length=20, unique=True, blank=True, help_text="Unique Employee ID (e.g., EMP001). Auto-generated if blank.")
-    # We can now potentially remove first_name, last_name, and email as they can be sourced from the User model.
-    # However, keeping them here can be useful for HR-specific records that might differ from user account details.
-    # For this version, we'll keep them for simplicity.
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True, max_length=255)

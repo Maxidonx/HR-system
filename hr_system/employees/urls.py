@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import EmployeeViewSet # Imported above
 
 router = DefaultRouter()
-router.register(r'', EmployeeViewSet, basename='employee')
+router.register(r'employee', EmployeeViewSet, basename='employee')
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

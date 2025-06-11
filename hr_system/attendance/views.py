@@ -25,8 +25,6 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
         
-        # FIX: First, check if the user is authenticated. If not (e.g. during
-        # schema generation by drf-yasg), return an empty queryset to prevent errors.
         if not user.is_authenticated:
             return Attendance.objects.none()
 
@@ -35,8 +33,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         
         # Regular employees see only their own records
         try:
-            # We can now safely assume user is authenticated and has an email.
-            employee = Employee.objects.get(email=user.email)
+            employee = Employee.objects.get(user=user)
             return Attendance.objects.filter(employee=employee).select_related('employee')
         except Employee.DoesNotExist:
             # If no employee profile is linked to the user, return no records
@@ -49,7 +46,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         """
         user = request.user
         try:
-            employee = Employee.objects.get(email=user.email)
+            employee = Employee.objects.get(user=user)
         except Employee.DoesNotExist:
             return Response({'error': 'No employee profile found for this user.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -69,10 +66,11 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     def clock_out(self, request):
         """
         Finds the open attendance record for the day and sets the clock_out time.
+        Optionally accepts 'notes' in the request body.
         """
         user = request.user
         try:
-            employee = Employee.objects.get(email=user.email)
+            employee = Employee.objects.get(user=user)
         except Employee.DoesNotExist:
             return Response({'error': 'No employee profile found for this user.'}, status=status.HTTP_404_NOT_FOUND)
         
@@ -84,6 +82,12 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             return Response({'error': 'No open clock-in record found for today.'}, status=status.HTTP_400_BAD_REQUEST)
 
         record_to_close.clock_out = timezone.now()
+        
+        # --- NEW: Add notes if provided in the request body ---
+        notes = request.data.get('notes', None)
+        if notes:
+            record_to_close.notes = notes
+            
         record_to_close.save()
         
         serializer = self.get_serializer(record_to_close)
