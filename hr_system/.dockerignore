@@ -1,1 +1,8 @@
 .env.dev
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+*.db
+staticfiles/
