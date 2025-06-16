@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
+import os
 import dj_database_url
 from pathlib import Path
 from datetime import timedelta
@@ -21,13 +23,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h7fjff$d#r+%w)&3o@jdl7(!gkz7&i_4otx%b+bmfx^r0(a!7x'
+# SECRET_KEY = 'django-insecure-h7fjff$d#r+%w)&3o@jdl7(!gkz7&i_4otx%b+bmfx^r0(a!7x'
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get('DEBUG', '0') == '1'
 
+# ALLOWED_HOSTS = []
 ALLOWED_HOSTS = []
-
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -38,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
 
     # Third-party apps
     'rest_framework',
@@ -54,9 +63,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add Whitenoise middleware here
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,13 +100,14 @@ WSGI_APPLICATION = 'hr_system.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # Read the DATABASE_URL from the environment, fall back to SQLite for local
+    'default': dj_database_url.config(
+        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
+        conn_max_age=600
+    )
 }
 
-DATABASES['default'] = dj_database_url.parse("postgresql://hr_management_crft_user:PeMIXQBRZnlhTS6PKUt4J5dMXGOrODD0@dpg-d16v5c8dl3ps739shn20-a.oregon-postgres.render.com/hr_management_crft")
+# DATABASES['default'] = dj_database_url.parse("postgresql://hr_management_crft_user:PeMIXQBRZnlhTS6PKUt4J5dMXGOrODD0@dpg-d16v5c8dl3ps739shn20-a.oregon-postgres.render.com/hr_management_crft")
 
 # postgresql://hr_management_crft_user:PeMIXQBRZnlhTS6PKUt4J5dMXGOrODD0@dpg-d16v5c8dl3ps739shn20-a.oregon-postgres.render.com/hr_management_crft
 
@@ -134,8 +145,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = "/app/staticfiles"
+STATIC_URL = '/static/'
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
