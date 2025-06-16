@@ -8,16 +8,16 @@ from drf_yasg import openapi
 
 # This configuration makes the Swagger UI available in production
 schema_view = get_schema_view(
-   openapi.Info(
-      title="HR System API",
-      default_version='v1',
-      description="API documentation for the Tunga TIA Dev Challenge HR System",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@hrsystem.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny),
+    openapi.Info(
+        title="HR System API",
+        default_version='v1',
+        description="API documentation for the Tunga TIA Dev Challenge HR System",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@hrsystem.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],  # ✅ Correct usage
 )
 
 urlpatterns = [
