@@ -59,8 +59,8 @@ This project is configured to run locally using Docker and Docker Compose for a 
 ### Configuration
 1. **Clone the Repository:**
 ```
-git clone <your-repository-url>
-cd <your-project-folder>
+git clone https://github.com/Maxidonx/HR-system.git
+cd HR-system/hr_system
 ```
 2. **Create the Environment File:**
     * Create a file named .env.dev in the project root.
@@ -69,7 +69,7 @@ cd <your-project-folder>
 ```
 # .env.dev
 DEBUG=1
-SECRET_KEY=your_django_secret_key_goes_here
+SECRET_KEY=your_django_secret_key_goes_here (generate a random key value)
 DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
 DATABASE_URL=postgresql://your_db_user:your_db_password@your_db_host/your_db_name
 ```
